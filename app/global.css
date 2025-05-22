@@ -1,0 +1,57 @@
+/* Theme */
+
+.theme-dark {
+    --bg: #101014;
+    --bg-light: #202028;
+    --light-border: none;
+    --text: whitesmoke;
+    color-scheme: dark;
+}
+
+.theme-light {
+    --bg: #f4f4f0;
+    --bg-light: #eee;
+    --light-border: 1px solid #0000003f;
+    --text: #101010;
+    color-scheme: light;
+}
+
+.accent-green {
+    --accent: #419446;
+}
+
+.accent-purple {
+    --accent: #663399;
+}
+
+.accent-pink {
+    --accent: #db5ec0;
+}
+
+/* Klasy pomocniczne */
+
+.accent-button {
+    background-color: var(--accent);
+    color: white;
+    padding: .25rem .5rem;
+    border: none;
+    border-radius: .25rem;
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--text);
+
+    margin: 0;
+}
+
+header {
+    background-color: var(--accent);
+    color: white;
+    padding: .5rem;
+}
+
+h1 {
+    margin: 0;
+    font-size: 1.5rem;
+}

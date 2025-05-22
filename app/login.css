@@ -1,0 +1,27 @@
+body {
+    height: 100vh;
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+#login-wrapper {
+    display: grid;
+    place-items: center;
+    flex-grow: 1;
+}
+
+form#login {
+    background-color: var(--bg-light);
+    border: var(--light-border);
+    display: flex;
+    flex-flow: column nowrap;
+    width: 15rem;
+    gap: .5rem;
+    padding: 1rem;
+    border-radius: .5rem;
+
+    h2 {
+        text-align: center;
+        margin: 0;
+    }
+}
