@@ -10,7 +10,7 @@
 
 .theme-light {
     --bg: #f4f4f0;
-    --bg-light: #eee;
+    --bg-light: #efefef;
     --light-border: 1px solid #0000003f;
     --text: #101010;
     color-scheme: light;
