@@ -1,8 +1,33 @@
 import { Hono } from "jsr:@hono/hono@4.7.10";
-import { setCookie } from "jsr:@hono/hono@4.7.10/cookie";
+import { getCookie, setCookie } from "jsr:@hono/hono@4.7.10/cookie";
 import { serveStatic } from "jsr:@hono/hono@4.7.10/deno";
 import { HTTPException } from "jsr:@hono/hono@4.7.10/http-exception";
 import accounts from "./accounts.json" with { type: "json" };
+
+interface FileEntry {
+    type: "file";
+    name: string;
+}
+
+interface DirectoryEntry {
+    type: "directory";
+    name: string;
+    children: ListEntry[];
+}
+
+type ListEntry = FileEntry | DirectoryEntry;
+
+async function getFileList(path: string) {
+    const result: ListEntry[] = [];
+    for await (const entry of Deno.readDir(path)) {
+        if (entry.isFile) {
+            result.push({ type: "file", name: entry.name });
+        } else if (entry.isDirectory) {
+            result.push({ type: "directory", name: entry.name, children: await getFileList(`${path}/${entry.name}`) })
+        }
+    }
+    return result;
+}
 
 const app = new Hono();
 app.post("/login", async (c) => {
@@ -17,5 +42,13 @@ app.post("/login", async (c) => {
     setCookie(c, "user", username, { maxAge: 3 * 24 * 60 * 60 });
     return c.body(null, 204);
 });
+app.get("/list", async (c) => {
+    const username = getCookie(c, "user");
+    if (!username) {
+        throw new HTTPException(401);
+    }
+
+    return c.json(await getFileList(`./data/${username}`));
+})
 app.use("*", serveStatic({ root: "./app" }))
 Deno.serve(app.fetch);
