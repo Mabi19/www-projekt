@@ -24,8 +24,17 @@ main {
     gap: .5rem;
 }
 
-summary.entry-main::marker {
-    content: "";
+.entry-main > .filename {
+    border: none;
+    background: none;
+    text-decoration: underline;
+}
+
+summary.entry-main {
+    cursor: pointer;
+    &::marker {
+        content: "";
+    }
 }
 
 details > .directory-list {
