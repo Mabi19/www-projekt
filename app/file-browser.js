@@ -1,4 +1,7 @@
+const IMAGE_EXTENSIONS = new Set(["jpg", "jpeg", "png", "gif"]);
+
 const fileRoot = document.querySelector("#file-root");
+
 function buildFileList(children, listElement) {
     for (const entry of children) {
         const li = document.createElement("li");
@@ -15,6 +18,7 @@ function buildFileList(children, listElement) {
             details.appendChild(mainRow);
 
             const sublist = document.createElement("ul");
+            sublist.classList.add("directory-list");
             buildFileList(entry.children, sublist);
             details.appendChild(sublist);
 
@@ -22,9 +26,31 @@ function buildFileList(children, listElement) {
         }
         mainRow.classList.add("entry-main");
 
-        const icon = document.createElement("span");
-        icon.textContent = entry.type;
-        mainRow.appendChild(icon);
+        if (entry.type == "directory") {
+            const iconClosed = document.createElement("span");
+            iconClosed.classList.add("material-symbols-rounded", "directory-icon-closed");
+            iconClosed.textContent = "folder";
+
+            const iconOpen = document.createElement("span");
+            iconOpen.classList.add("material-symbols-rounded", "directory-icon-open");
+            iconOpen.textContent = "folder_open";
+
+            mainRow.append(iconClosed, iconOpen);
+        } else {
+            const icon = document.createElement("span");
+            icon.classList.add("material-symbols-rounded");
+            const fileExtension = entry.name.split(".").at(-1);
+            if (IMAGE_EXTENSIONS.has(fileExtension)) {
+                icon.classList.add("icon-picture");
+                icon.textContent = "image";
+            } else {
+                icon.textContent = "draft";
+            }
+
+            mainRow.appendChild(icon);
+        }
+
+
         const name = document.createElement("span");
         name.textContent = entry.name;
         mainRow.appendChild(name);

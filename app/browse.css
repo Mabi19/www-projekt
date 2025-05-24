@@ -1,0 +1,62 @@
+main {
+    padding: .5rem;
+}
+
+.directory-list {
+    margin: 0;
+    padding-left: 0;
+    display: flex;
+    flex-flow: column nowrap;
+    gap: .25rem;
+
+    & > li {
+        list-style-type: none;
+    }
+}
+
+.entry-main {
+    background-color: var(--bg-light);
+    padding: .5rem;
+    border-radius: .5rem;
+
+    display: flex;
+    flex-flow: row nowrap;
+    gap: .5rem;
+}
+
+summary.entry-main::marker {
+    content: "";
+}
+
+details > .directory-list {
+    margin-top: .25rem;
+
+    interpolate-size: allow-keywords;
+    transition: height 0.5s ease, content-visibility 0.5s ease allow-discrete;
+    height: 0;
+    overflow: clip;
+}
+
+details[open] > .directory-list {
+    height: auto;
+}
+
+.directory-list:not(#file-root) {
+    margin-left: 2rem;
+}
+
+.directory-icon-open, .directory-icon-closed {
+    color: var(--accent-light);
+}
+
+details[open] > .entry-main > .directory-icon-closed {
+    display: none;
+}
+
+details:not([open]) > .entry-main > .directory-icon-open {
+    display: none;
+}
+
+.icon-picture {
+    color: dodgerblue;
+}
