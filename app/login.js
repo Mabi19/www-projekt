@@ -24,4 +24,9 @@ loginForm.addEventListener("submit", async (ev) => {
             resultBox.textContent = "Nieznany błąd :(";
         }
     }
-})
+});
+
+const userCookie = document.cookie.split("; ").find((entry) => entry.startsWith("user="))?.split("=")?.[1];
+if (userCookie) {
+    window.location.href = "./browse.html";
+}
