@@ -1,10 +1,13 @@
+import { username } from "./account.js";
+
 const IMAGE_EXTENSIONS = new Set(["jpg", "jpeg", "png", "gif"]);
 
 const fileRoot = document.querySelector("#file-root");
 
-function buildFileList(children, listElement) {
+function buildFileList(children, listElement, basePath = "/") {
     for (const entry of children) {
         const li = document.createElement("li");
+        li.dataset.path = basePath + entry.name;
 
         let mainRow;
         if (entry.type === "file") {
@@ -19,7 +22,7 @@ function buildFileList(children, listElement) {
 
             const sublist = document.createElement("ul");
             sublist.classList.add("directory-list");
-            buildFileList(entry.children, sublist);
+            buildFileList(entry.children, sublist, basePath + entry.name + "/");
             details.appendChild(sublist);
 
             li.appendChild(details);
@@ -36,6 +39,10 @@ function buildFileList(children, listElement) {
             iconOpen.textContent = "folder_open";
 
             mainRow.append(iconClosed, iconOpen);
+
+            const name = document.createElement("span");
+            name.textContent = entry.name;
+            mainRow.appendChild(name);
         } else {
             const icon = document.createElement("span");
             icon.classList.add("material-symbols-rounded");
@@ -48,15 +55,43 @@ function buildFileList(children, listElement) {
             }
 
             mainRow.appendChild(icon);
+
+            const name = document.createElement("button");
+            name.classList.add("filename");
+            name.addEventListener("click", openFileDialog);
+            name.textContent = entry.name;
+            mainRow.appendChild(name);
         }
 
 
-        const name = document.createElement("span");
-        name.textContent = entry.name;
-        mainRow.appendChild(name);
+
 
         listElement.appendChild(li);
     }
+}
+
+/** @type HTMLDialogElement */
+const fileDetailDialog = document.querySelector("#file-detail");
+const fileDetailPath = fileDetailDialog.querySelector("#file-detail-path");
+const fileDetailDownload = fileDetailDialog.querySelector("#file-detail-download");
+const fileDetailShare = fileDetailDialog.querySelector("#file-detail-share");
+const fileDetailDelete = fileDetailDialog.querySelector("#file-detail-delete");
+let currentDialogPath;
+/** @param {MouseEvent} ev */
+function openFileDialog(ev) {
+    // find the main list item for its data-path
+    /** @type HTMLElement */
+    let mainElement = ev.target;
+    while (!("path" in mainElement.dataset)) {
+        mainElement = mainElement.parentElement;
+    }
+    const path = mainElement.dataset.path;
+    currentDialogPath = path;
+    fileDetailPath.textContent = path;
+
+    fileDetailDownload.href = `/data/${username}${path}`;
+
+    fileDetailDialog.showModal();
 }
 
 let data;

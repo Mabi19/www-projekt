@@ -60,3 +60,16 @@ details:not([open]) > .entry-main > .directory-icon-open {
 .icon-picture {
     color: dodgerblue;
 }
+
+
+#file-detail {
+    hr {
+        margin: auto 0;
+    }
+
+    .file-actions {
+        display: flex;
+        flex-flow: row nowrap;
+        gap: .5rem;
+    }
+}

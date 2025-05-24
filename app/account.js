@@ -1,4 +1,4 @@
-const username = document.cookie.split("; ").find((entry) => entry.startsWith("user=")).split("=").at(-1);
+export const username = document.cookie.split("; ").find((entry) => entry.startsWith("user=")).split("=").at(-1);
 
 document.querySelector("#account-username").textContent = username;
 document.querySelector("#logout-button").addEventListener("click", () => {
