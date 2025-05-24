@@ -47,6 +47,12 @@
     color: inherit;
     border-radius: .25rem;
     padding: .25rem;
+
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    gap: .25rem;
+
     &:hover {
         background-color: rgb(255 255 255 / 20%);
     }
@@ -74,6 +80,10 @@
         'opsz' 24;
 }
 
+button {
+    font: inherit;
+}
+
 body {
     background-color: var(--bg);
     color: var(--text);
@@ -88,6 +98,8 @@ header {
 
     display: flex;
     flex-flow: row nowrap;
+    align-items: center;
+    gap: .5rem;
 }
 
 h1 {
@@ -100,17 +112,6 @@ dialog, .dialog-panel {
     border: var(--light-border);
     border-radius: .5rem;
     padding: 0;
-
-    opacity: 0;
-    transition-behavior: allow-discrete;
-    transition:
-        opacity .5s ease-out,
-        display .5s ease-out allow-discrete,
-        overlay .5s ease-out allow-discrete;
-
-    &:open {
-        opacity: 1;
-    }
 
     .content {
         display: flex;
@@ -133,6 +134,19 @@ dialog, .dialog-panel {
 
     .header > span {
         font-weight: bold;
+    }
+}
+
+dialog {
+    opacity: 0;
+    transition-behavior: allow-discrete;
+    transition:
+        opacity .5s ease-out,
+        display .5s ease-out allow-discrete,
+        overlay .5s ease-out allow-discrete;
+
+    &:open {
+        opacity: 1;
     }
 }
 
@@ -161,4 +175,11 @@ dialog:open::backdrop {
         background-color: rgb(from var(--text) 0 0 0 / 0%);
         backdrop-filter: blur(0px);
     }
+}
+
+#account {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    gap: .25rem;
 }
