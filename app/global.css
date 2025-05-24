@@ -141,9 +141,9 @@ dialog {
     opacity: 0;
     transition-behavior: allow-discrete;
     transition:
-        opacity .5s ease-out,
-        display .5s ease-out allow-discrete,
-        overlay .5s ease-out allow-discrete;
+        opacity .25s ease-out,
+        display .25s ease-out allow-discrete,
+        overlay .25s ease-out allow-discrete;
 
     &:open {
         opacity: 1;
@@ -155,10 +155,10 @@ dialog::backdrop {
     backdrop-filter: blur(0px);
     transition-behavior: allow-discrete;
     transition:
-        display .5s allow-discrete,
-        overlay .5s allow-discrete,
-        background-color .5s ease-out,
-        backdrop-filter .5s ease-out;
+        display .25s allow-discrete,
+        overlay .25s allow-discrete,
+        background-color .25s ease-out,
+        backdrop-filter .25s ease-out;
 }
 
 dialog:open::backdrop {
