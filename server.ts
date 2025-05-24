@@ -50,5 +50,6 @@ app.get("/list", async (c) => {
 
     return c.json(await getFileList(`./data/${username}`));
 })
-app.use("*", serveStatic({ root: "./app" }))
+app.use("/data/*", serveStatic({ root: "./" }));
+app.use("*", serveStatic({ root: "./app" }));
 Deno.serve(app.fetch);
