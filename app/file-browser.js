@@ -93,6 +93,7 @@ function openFileDialog(ev) {
 
     fileDetailDialog.showModal();
 }
+fileDetailDialog.querySelector(".header > button").addEventListener("click", () => fileDetailDialog.close());
 
 let data;
 try {
