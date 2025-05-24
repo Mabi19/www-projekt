@@ -17,11 +17,37 @@ function updateTheme() {
         accentColor = "green";
     }
 
-    const htmlClasses = document.documentElement.classList;
-    for (const cls of htmlClasses) {
-        htmlClasses.remove(cls);
-    }
-    htmlClasses.add(`theme-${theme}`, `accent-${accentColor}`);
+    document.documentElement.className = "";
+    document.documentElement.classList.add(`theme-${theme}`, `accent-${accentColor}`);
 };
 
 updateTheme();
+
+document.addEventListener("DOMContentLoaded", () => {
+    /** @type HTMLDialogElement */
+    const settingsDialog = document.querySelector("#settings");
+    if (settingsDialog) {
+        /** @type HTMLSelectElement */
+        const themeSelect = settingsDialog.querySelector("#theme");
+        /** @type HTMLSelectElement */
+        const accentSelect = settingsDialog.querySelector("#accent-color");
+
+        themeSelect.value = localStorage.getItem("theme") ?? "auto";
+        accentSelect.value = localStorage.getItem("accent") ?? "green";
+        themeSelect.addEventListener("change", () => {
+            localStorage.setItem("theme", themeSelect.value);
+            updateTheme();
+        });
+        accentSelect.addEventListener("change", () => {
+            localStorage.setItem("accent", accentSelect.value);
+            updateTheme();
+        });
+
+        /** @type HTMLButtonElement */
+        const closeButton = settingsDialog.querySelector(".header > button");
+        closeButton.addEventListener("click", () => settingsDialog.close());
+    }
+
+    const settingsButton = document.querySelector("#settings-button");
+    settingsButton?.addEventListener("click", () => settingsDialog.showModal());
+});

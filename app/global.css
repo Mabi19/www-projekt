@@ -27,7 +27,7 @@
 }
 
 .accent-pink {
-    --accent: #db5ec0;
+    --accent: #cf53b4;
     --accent-light: #f47cda;
 }
 
@@ -39,6 +39,30 @@
     padding: .25rem .5rem;
     border: none;
     border-radius: .25rem;
+}
+
+.icon-button {
+    background: none;
+    border: none;
+    color: inherit;
+    border-radius: .25rem;
+    padding: .25rem;
+    &:hover {
+        background-color: rgb(255 255 255 / 20%);
+    }
+}
+
+.icon-filled {
+    font-variation-settings:
+        'FILL' 1,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 24;
+}
+
+/* Element pomocniczy do flexboxów */
+.spacer {
+    flex-grow: 1;
 }
 
 .material-symbols-rounded {
@@ -61,9 +85,80 @@ header {
     background-color: var(--accent);
     color: white;
     padding: .5rem;
+
+    display: flex;
+    flex-flow: row nowrap;
 }
 
 h1 {
     margin: 0;
     font-size: 1.5rem;
+}
+
+dialog, .dialog-panel {
+    background-color: var(--bg-light);
+    border: var(--light-border);
+    border-radius: .5rem;
+    padding: 0;
+
+    opacity: 0;
+    transition-behavior: allow-discrete;
+    transition:
+        opacity .5s ease-out,
+        display .5s ease-out allow-discrete,
+        overlay .5s ease-out allow-discrete;
+
+    &:open {
+        opacity: 1;
+    }
+
+    .content {
+        display: flex;
+        flex-flow: column nowrap;
+        width: 15rem;
+        gap: .5rem;
+        padding: 1rem;
+    }
+
+    .header {
+        display: flex;
+        flex-flow: row nowrap;
+        align-items: center;
+        gap: .5rem;
+
+        padding: .25rem .5rem;
+        background-color: var(--accent);
+        color: white;
+    }
+
+    .header > span {
+        font-weight: bold;
+    }
+}
+
+dialog::backdrop {
+    background-color: rgb(0 0 0 / 0%);
+    backdrop-filter: blur(0px);
+    transition-behavior: allow-discrete;
+    transition:
+        display .5s allow-discrete,
+        overlay .5s allow-discrete,
+        background-color .5s ease-out,
+        backdrop-filter .5s ease-out;
+}
+
+dialog:open::backdrop {
+    background-color: rgb(from var(--text) r g b / 20%);
+    backdrop-filter: blur(3px);
+}
+
+@starting-style {
+    dialog:open {
+        opacity: 0;
+    }
+
+    dialog:open::backdrop {
+        background-color: rgb(from var(--text) 0 0 0 / 0%);
+        backdrop-filter: blur(0px);
+    }
 }
