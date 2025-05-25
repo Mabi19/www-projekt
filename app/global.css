@@ -11,7 +11,7 @@
 
 .theme-light {
     --bg: #f4f4f0;
-    --bg-light: #efefef;
+    --bg-light: #e9e9e5;
     --bg-lighter: #e3e3e3;
     --light-border: 1px solid #0000003f;
     --text: #101010;
@@ -20,7 +20,7 @@
 
 .accent-green {
     --accent: #419446;
-    --accent-light: #4bc053;
+    --accent-light: #479e4d;
 }
 
 .accent-purple {
@@ -30,7 +30,7 @@
 
 .accent-pink {
     --accent: #cf53b4;
-    --accent-light: #f47cda;
+    --accent-light: #d658bb;
 }
 
 /* Klasy pomocniczne */
