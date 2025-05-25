@@ -3,11 +3,34 @@ import { username } from "./account.js";
 const IMAGE_EXTENSIONS = new Set(["jpg", "jpeg", "png", "gif"]);
 
 const fileRoot = document.querySelector("#file-root");
+let sortDirection = localStorage.getItem("sort-direction") ?? "ascending";
+let folderPosition = localStorage.getItem("folder-position") ?? "start";
+/** @type HTMLFormElement */
+const sortForm = document.querySelector("#controls-sorting");
+const sortRadio = sortForm.elements.namedItem("sort-direction");
+const folderRadio = sortForm.elements.namedItem("folder-position");
+sortRadio.value = sortDirection;
+folderRadio.value = folderPosition;
+sortRadio.forEach((/** @type HTMLInputElement */ el) => {
+    el.addEventListener("change", (ev) => {
+        sortDirection = ev.target.value;
+        localStorage.setItem("sort-direction", sortDirection);
+        sortAllFileLists();
+    });
+});
+folderRadio.forEach((/** @type HTMLInputElement */ el) => {
+    el.addEventListener("change", (ev) => {
+        folderPosition = ev.target.value;
+        localStorage.setItem("folder-position", folderPosition);
+        sortAllFileLists();
+    });
+});
 
 function buildFileList(children, listElement, basePath = "/") {
     for (const entry of children) {
         const li = document.createElement("li");
         li.dataset.path = basePath + entry.name;
+        li.dataset.type = entry.type;
 
         let mainRow;
         if (entry.type === "file") {
@@ -65,6 +88,42 @@ function buildFileList(children, listElement, basePath = "/") {
 
         listElement.appendChild(li);
     }
+}
+
+/** @param {HTMLUListElement} list */
+function sortFileList(list) {
+    console.log(sortDirection, folderPosition);
+    const listItems = Array.from(list.children);
+    console.log("before sorting:", listItems);
+    listItems.sort((/** @type HTMLLIElement */ a, /** @type HTMLLIElement */ b) => {
+        const aType = a.dataset.type;
+        const bType = b.dataset.type;
+        const nameResult = a.dataset.path.localeCompare(b.dataset.path) * (sortDirection == "ascending" ? 1 : -1);
+        console.log(aType, bType);
+
+        if (folderPosition == "mixed") {
+            return nameResult;
+        } else if (folderPosition === "start" || folderPosition === "end") {
+            if (aType === bType) {
+                return nameResult;
+            }
+
+            if (aType === "directory") {
+                // only a is a directory
+                return folderPosition === "start" ? -1 : 1;
+            } else {
+                // only b is a directory
+                return folderPosition === "start" ? 1 : -1;
+            }
+        }
+    });
+    console.log("after sorting:", listItems);
+    list.replaceChildren(...listItems);
+}
+
+function sortAllFileLists() {
+    sortFileList(fileRoot);
+    fileRoot.querySelectorAll(".directory-list").forEach((el) => sortFileList(el));
 }
 
 /** @type HTMLDialogElement */
@@ -131,6 +190,7 @@ try {
 
     fileRoot.replaceChildren();
     buildFileList(data, fileRoot);
+    sortAllFileLists(fileRoot);
 } catch (e) {
     alert("Wystąpił błąd podczas ładowania danych");
     console.error(e);

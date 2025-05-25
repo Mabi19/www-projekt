@@ -1,5 +1,9 @@
 /* Theme */
 
+:root {
+    accent-color: var(--accent);
+}
+
 .theme-dark {
     --bg: #101014;
     --bg-light: #202028;

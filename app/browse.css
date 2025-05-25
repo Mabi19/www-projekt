@@ -110,8 +110,14 @@ img#file-detail-preview {
 .file-controls-group {
     display: flex;
     flex-flow: row nowrap;
+    align-items: center;
     gap: .5rem;
     padding: .5rem;
     border-radius: .25rem;
     background-color: var(--bg-light);
+}
+
+.file-controls-group .divider {
+    height: 100%;
+    border-right: 1px solid #7f7f7f7f;
 }
