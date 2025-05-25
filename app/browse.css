@@ -22,8 +22,11 @@ main {
 }
 
 .entry-main {
+    display: block;
+    width: 100%;
     background-color: var(--bg-light);
     padding: .5rem;
+    border: none;
     border-radius: .5rem;
 
     display: flex;

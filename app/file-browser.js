@@ -94,7 +94,9 @@ function buildFileList(children, listElement, basePath = "/") {
 
         let mainRow;
         if (entry.type === "file") {
-            mainRow = document.createElement("div");
+            mainRow = document.createElement("button");
+            mainRow.classList.add("raw");
+            mainRow.addEventListener("click", openFileDialog);
 
             li.appendChild(mainRow);
         } else if (entry.type === "directory") {
@@ -139,9 +141,8 @@ function buildFileList(children, listElement, basePath = "/") {
 
             mainRow.appendChild(icon);
 
-            const name = document.createElement("button");
+            const name = document.createElement("span");
             name.classList.add("filename");
-            name.addEventListener("click", openFileDialog);
             name.textContent = entry.name;
             mainRow.appendChild(name);
         }

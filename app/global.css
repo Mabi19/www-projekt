@@ -39,7 +39,7 @@
 
 /* Klasy pomocniczne */
 
-button, .button {
+button:not(.raw), .button {
     border: none;
     color: inherit;
     border-radius: .25rem;
