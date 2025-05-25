@@ -63,9 +63,6 @@ function buildFileList(children, listElement, basePath = "/") {
             mainRow.appendChild(name);
         }
 
-
-
-
         listElement.appendChild(li);
     }
 }
@@ -88,6 +85,31 @@ function openFileDialog(ev) {
     const path = mainElement.dataset.path;
     currentDialogPath = path;
     fileDetailPath.textContent = path;
+
+    // preview
+    const fileExtension = path.split(".").at(-1);
+    const previousPreview = document.querySelector("#file-detail-preview");
+    let preview;
+    if (IMAGE_EXTENSIONS.has(fileExtension)) {
+        preview = document.createElement("img");
+        preview.id = "file-detail-preview";
+        preview.src = `/data/${username}${path}`;
+        preview.alt = `Podgląd pliku ${path}`;
+    } else if (fileExtension == "txt") {
+        // TODO: Add highlight.js here
+        preview = document.createElement("pre");
+        preview.id = "file-detail-preview";
+        preview.textContent = "Ładowanie...";
+        fetch(`/data/${username}${path}`)
+            .then((res) => res.text())
+            .then((text) => preview.textContent = text)
+            .catch((e) => preview.textContent = `Wystąpił błąd: ${e.message}`);
+    } else {
+        preview = document.createElement("div");
+        preview.id = "file-detail-preview";
+        preview.textContent = "<brak>";
+    }
+    previousPreview.replaceWith(preview);
 
     fileDetailDownload.href = `/data/${username}${path}`;
 

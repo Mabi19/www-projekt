@@ -82,3 +82,20 @@ details:not([open]) > .entry-main > .directory-icon-open {
         gap: .5rem;
     }
 }
+
+pre#file-detail-preview {
+    background-color: var(--bg-lighter);
+    border: 1px solid #7f7f7f7f;
+    padding: .5rem;
+    margin: 0;
+    border-radius: .25rem;
+    overflow: auto;
+}
+
+img#file-detail-preview {
+    display: block;
+    border-radius: .25rem;
+
+    object-fit: contain;
+    max-height: 20rem;
+}

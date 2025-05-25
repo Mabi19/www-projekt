@@ -3,6 +3,7 @@
 .theme-dark {
     --bg: #101014;
     --bg-light: #202028;
+    --bg-lighter: #30303f;
     --light-border: none;
     --text: whitesmoke;
     color-scheme: dark;
@@ -11,6 +12,7 @@
 .theme-light {
     --bg: #f4f4f0;
     --bg-light: #efefef;
+    --bg-lighter: #e3e3e3;
     --light-border: 1px solid #0000003f;
     --text: #101010;
     color-scheme: light;
@@ -135,7 +137,8 @@ dialog, .dialog-panel {
     .content {
         display: flex;
         flex-flow: column nowrap;
-        width: 15rem;
+        min-width: 15rem;
+        max-width: min(30rem, calc(100vw - .5rem));
         gap: .5rem;
         padding: 1rem;
     }
