@@ -1,34 +1,54 @@
+import { username } from "./account.js";
 import { IMAGE_EXTENSIONS } from "./file-types.js";
 
 /** @type HTMLDialogElement */
 const fileDetailDialog = document.querySelector("#file-detail");
+const actionArea = fileDetailDialog.querySelector("#file-action-area");
 const fileDetailPath = fileDetailDialog.querySelector("#file-detail-path");
 const fileDetailDownload = fileDetailDialog.querySelector("#file-detail-download");
 const fileDetailShare = fileDetailDialog.querySelector("#file-detail-share");
 const fileDetailDelete = fileDetailDialog.querySelector("#file-detail-delete");
 fileDetailDialog.querySelector(".header > button")?.addEventListener("click", () => fileDetailDialog.close());
 
+fileDetailShare?.addEventListener("click", () => {
+    const url = `${location.protocol}//${window.location.host}/file.html?path=/${username}${currentDialogPath}`
+
+    const pre = document.createElement("pre");
+    pre.textContent = url;
+    const copyButton = document.createElement("button");
+    copyButton.classList.add("material-symbols-rounded");
+    copyButton.textContent = "content_copy";
+    copyButton.title = "Skopiuj do schowka";
+    copyButton.addEventListener("click", () => navigator.clipboard.writeText(url))
+
+    actionArea.className = "share";
+    actionArea.replaceChildren(pre, copyButton);
+})
+
 let currentDialogPath;
-/** @param {string} fullPath */
-export function createFileDialog(fullPath) {
-    currentDialogPath = fullPath;
-    fileDetailPath.textContent = fullPath;
+/**
+ * @param {string} username
+ * @param {string} path
+ */
+export function createFileDialog(username, path) {
+    currentDialogPath = path;
+    fileDetailPath.textContent = path;
 
     // preview
-    const fileExtension = fullPath.split(".").at(-1);
+    const fileExtension = path.split(".").at(-1);
     const previousPreview = document.querySelector("#file-detail-preview");
     let preview;
     if (IMAGE_EXTENSIONS.has(fileExtension)) {
         preview = document.createElement("img");
         preview.id = "file-detail-preview";
-        preview.src = `/data/${fullPath}`;
-        preview.alt = `Podgląd pliku ${fullPath}`;
+        preview.src = `/data/${username}${path}`;
+        preview.alt = `Podgląd pliku ${path}`;
     } else if (fileExtension == "txt") {
         // TODO: Add highlight.js here
         preview = document.createElement("pre");
         preview.id = "file-detail-preview";
         preview.textContent = "Ładowanie...";
-        fetch(`/data/${fullPath}`)
+        fetch(`/data/${username}${path}`)
             .then((res) => res.text())
             .then((text) => preview.textContent = text)
             .catch((e) => preview.textContent = `Wystąpił błąd: ${e.message}`);
@@ -39,12 +59,14 @@ export function createFileDialog(fullPath) {
     }
     previousPreview.replaceWith(preview);
 
+    actionArea.replaceChildren();
+
     if (fileDetailDownload) {
-        fileDetailDownload.href = `/data/${fullPath}`;
+        fileDetailDownload.href = `/data/${username}${path}`;
     }
 }
 
-export function openFileDialog(username, path) {
-    createFileDialog(username + path);
+export function openFileDialog(path) {
+    createFileDialog(username, path);
     fileDetailDialog.showModal();
 }

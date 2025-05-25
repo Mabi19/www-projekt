@@ -139,6 +139,15 @@ hr {
     border-bottom: 2px solid #7f7f7f7f;
 }
 
+pre {
+    background-color: var(--bg-lighter);
+    border: 1px solid #7f7f7f7f;
+    padding: .5rem;
+    margin: 0;
+    border-radius: .25rem;
+    overflow: auto;
+}
+
 dialog, .dialog-panel {
     display: flex;
     flex-flow: column nowrap;
@@ -153,7 +162,7 @@ dialog, .dialog-panel {
     .content {
         display: flex;
         flex-flow: column nowrap;
-        min-width: 15rem;
+        min-width: 20rem;
         max-width: min(30rem, calc(100vw - .5rem));
         min-height: 0;
         gap: .5rem;

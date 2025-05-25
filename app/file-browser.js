@@ -1,4 +1,3 @@
-import { username } from "./account.js";
 import { openFileDialog } from "./file-dialog.js";
 import { IMAGE_EXTENSIONS } from "./file-types.js";
 
@@ -96,7 +95,7 @@ function buildFileList(children, listElement, basePath = "/") {
         if (entry.type === "file") {
             mainRow = document.createElement("button");
             mainRow.classList.add("raw");
-            mainRow.addEventListener("click", () => openFileDialog(username, li.dataset.path));
+            mainRow.addEventListener("click", () => openFileDialog(li.dataset.path));
 
             li.appendChild(mainRow);
         } else if (entry.type === "directory") {
