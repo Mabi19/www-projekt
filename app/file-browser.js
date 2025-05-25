@@ -37,6 +37,7 @@ searchInput.addEventListener("input", () => {
         for (const entry of fileRoot.querySelectorAll("li")) {
             entry.classList.remove("search-hidden");
         }
+        searchNothingFoundBox.remove("shown");
     } else {
         const anythingFound = filterFileList(fileRoot, searchTerm);
         if (!anythingFound) {
