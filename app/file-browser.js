@@ -1,6 +1,5 @@
-import { username } from "./account.js";
-
-const IMAGE_EXTENSIONS = new Set(["jpg", "jpeg", "png", "gif"]);
+import { openFileDialog } from "./file-dialog.js";
+import { IMAGE_EXTENSIONS } from "./file-types.js";
 
 const fileRoot = document.querySelector("#file-root");
 
@@ -96,7 +95,7 @@ function buildFileList(children, listElement, basePath = "/") {
         if (entry.type === "file") {
             mainRow = document.createElement("button");
             mainRow.classList.add("raw");
-            mainRow.addEventListener("click", openFileDialog);
+            mainRow.addEventListener("click", () => openFileDialog(li.dataset.path));
 
             li.appendChild(mainRow);
         } else if (entry.type === "directory") {
@@ -183,55 +182,7 @@ function sortAllFileLists() {
     fileRoot.querySelectorAll(".directory-list").forEach((el) => sortFileList(el));
 }
 
-/** @type HTMLDialogElement */
-const fileDetailDialog = document.querySelector("#file-detail");
-const fileDetailPath = fileDetailDialog.querySelector("#file-detail-path");
-const fileDetailDownload = fileDetailDialog.querySelector("#file-detail-download");
-const fileDetailShare = fileDetailDialog.querySelector("#file-detail-share");
-const fileDetailDelete = fileDetailDialog.querySelector("#file-detail-delete");
-let currentDialogPath;
-/** @param {MouseEvent} ev */
-function openFileDialog(ev) {
-    // find the main list item for its data-path
-    /** @type HTMLElement */
-    let mainElement = ev.target;
-    while (!("path" in mainElement.dataset)) {
-        mainElement = mainElement.parentElement;
-    }
-    const path = mainElement.dataset.path;
-    currentDialogPath = path;
-    fileDetailPath.textContent = path;
 
-    // preview
-    const fileExtension = path.split(".").at(-1);
-    const previousPreview = document.querySelector("#file-detail-preview");
-    let preview;
-    if (IMAGE_EXTENSIONS.has(fileExtension)) {
-        preview = document.createElement("img");
-        preview.id = "file-detail-preview";
-        preview.src = `/data/${username}${path}`;
-        preview.alt = `Podgląd pliku ${path}`;
-    } else if (fileExtension == "txt") {
-        // TODO: Add highlight.js here
-        preview = document.createElement("pre");
-        preview.id = "file-detail-preview";
-        preview.textContent = "Ładowanie...";
-        fetch(`/data/${username}${path}`)
-            .then((res) => res.text())
-            .then((text) => preview.textContent = text)
-            .catch((e) => preview.textContent = `Wystąpił błąd: ${e.message}`);
-    } else {
-        preview = document.createElement("div");
-        preview.id = "file-detail-preview";
-        preview.textContent = "<brak>";
-    }
-    previousPreview.replaceWith(preview);
-
-    fileDetailDownload.href = `/data/${username}${path}`;
-
-    fileDetailDialog.showModal();
-}
-fileDetailDialog.querySelector(".header > button").addEventListener("click", () => fileDetailDialog.close());
 
 let data;
 try {
