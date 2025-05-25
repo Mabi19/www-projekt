@@ -1,4 +1,7 @@
 main {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: .5rem;
     padding: .5rem;
 }
 
@@ -73,10 +76,6 @@ details:not([open]) > .entry-main > .directory-icon-open {
 
 
 #file-detail {
-    hr {
-        margin: auto 0;
-    }
-
     .file-actions {
         display: flex;
         flex-flow: row nowrap;
