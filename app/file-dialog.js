@@ -1,4 +1,3 @@
-import { username } from "./account.js";
 import { IMAGE_EXTENSIONS } from "./file-types.js";
 
 /** @type HTMLDialogElement */
@@ -7,27 +6,29 @@ const fileDetailPath = fileDetailDialog.querySelector("#file-detail-path");
 const fileDetailDownload = fileDetailDialog.querySelector("#file-detail-download");
 const fileDetailShare = fileDetailDialog.querySelector("#file-detail-share");
 const fileDetailDelete = fileDetailDialog.querySelector("#file-detail-delete");
+fileDetailDialog.querySelector(".header > button")?.addEventListener("click", () => fileDetailDialog.close());
+
 let currentDialogPath;
-/** @param {string} path */
-export function openFileDialog(path) {
-    currentDialogPath = path;
-    fileDetailPath.textContent = path;
+/** @param {string} fullPath */
+export function createFileDialog(fullPath) {
+    currentDialogPath = fullPath;
+    fileDetailPath.textContent = fullPath;
 
     // preview
-    const fileExtension = path.split(".").at(-1);
+    const fileExtension = fullPath.split(".").at(-1);
     const previousPreview = document.querySelector("#file-detail-preview");
     let preview;
     if (IMAGE_EXTENSIONS.has(fileExtension)) {
         preview = document.createElement("img");
         preview.id = "file-detail-preview";
-        preview.src = `/data/${username}${path}`;
-        preview.alt = `Podgląd pliku ${path}`;
+        preview.src = `/data/${fullPath}`;
+        preview.alt = `Podgląd pliku ${fullPath}`;
     } else if (fileExtension == "txt") {
         // TODO: Add highlight.js here
         preview = document.createElement("pre");
         preview.id = "file-detail-preview";
         preview.textContent = "Ładowanie...";
-        fetch(`/data/${username}${path}`)
+        fetch(`/data/${fullPath}`)
             .then((res) => res.text())
             .then((text) => preview.textContent = text)
             .catch((e) => preview.textContent = `Wystąpił błąd: ${e.message}`);
@@ -39,9 +40,11 @@ export function openFileDialog(path) {
     previousPreview.replaceWith(preview);
 
     if (fileDetailDownload) {
-        fileDetailDownload.href = `/data/${username}${path}`;
+        fileDetailDownload.href = `/data/${fullPath}`;
     }
+}
 
+export function openFileDialog(username, path) {
+    createFileDialog(username + path);
     fileDetailDialog.showModal();
 }
-fileDetailDialog.querySelector(".header > button").addEventListener("click", () => fileDetailDialog.close());

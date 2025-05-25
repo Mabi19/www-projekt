@@ -1,0 +1,14 @@
+body {
+    max-height: 100vh;
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+#centered-dialog-wrapper {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+    min-height: 0;
+}

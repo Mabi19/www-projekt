@@ -140,16 +140,23 @@ hr {
 }
 
 dialog, .dialog-panel {
+    display: flex;
+    flex-flow: column nowrap;
+    min-height: 0;
+
     background-color: var(--bg-light);
     border: var(--light-border);
     border-radius: .5rem;
+    overflow: hidden;
     padding: 0;
+    margin: 1rem;
 
     .content {
         display: flex;
         flex-flow: column nowrap;
         min-width: 15rem;
         max-width: min(30rem, calc(100vw - .5rem));
+        min-height: 0;
         gap: .5rem;
         padding: 1rem;
     }
