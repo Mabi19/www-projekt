@@ -149,7 +149,6 @@ dialog, .dialog-panel {
     border-radius: .5rem;
     overflow: hidden;
     padding: 0;
-    margin: 1rem;
 
     .content {
         display: flex;
@@ -185,6 +184,10 @@ dialog {
         display .25s ease-out allow-discrete,
         overlay .25s ease-out allow-discrete;
 
+    &:not(:open) {
+        display: none;
+    }
+
     &:open {
         opacity: 1;
     }
@@ -202,7 +205,7 @@ dialog::backdrop {
 }
 
 dialog:open::backdrop {
-    background-color: rgb(from var(--text) r g b / 20%);
+    background-color: rgb(from var(--text) r g b / 10%);
     backdrop-filter: blur(3px);
 }
 
