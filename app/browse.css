@@ -17,6 +17,10 @@ main {
     }
 }
 
+.directory-list li.search-hidden {
+    display: none;
+}
+
 .entry-main {
     background-color: var(--bg-light);
     padding: .5rem;
@@ -32,6 +36,7 @@ main {
     border: none;
     background: none;
     text-decoration: underline;
+    padding: 0;
 }
 
 summary.entry-main {
