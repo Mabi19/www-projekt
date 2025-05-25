@@ -125,3 +125,11 @@ img#file-detail-preview {
     height: 100%;
     border-right: 1px solid #7f7f7f7f;
 }
+
+#search-nothing-found {
+    text-align: center;
+    display: none;
+    &.shown {
+        display: block;
+    }
+}

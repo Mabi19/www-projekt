@@ -3,6 +3,7 @@ import { username } from "./account.js";
 const IMAGE_EXTENSIONS = new Set(["jpg", "jpeg", "png", "gif"]);
 
 const fileRoot = document.querySelector("#file-root");
+
 let sortDirection = localStorage.getItem("sort-direction") ?? "ascending";
 let folderPosition = localStorage.getItem("folder-position") ?? "start";
 /** @type HTMLFormElement */
@@ -25,6 +26,64 @@ folderRadio.forEach((/** @type HTMLInputElement */ el) => {
         sortAllFileLists();
     });
 });
+
+/** @type HTMLInputElement */
+const searchInput = document.querySelector("#file-search");
+const searchNothingFoundBox = document.querySelector("#search-nothing-found");
+searchInput.value = "";
+searchInput.addEventListener("input", () => {
+    const searchTerm = searchInput.value;
+    if (searchTerm === "") {
+        for (const entry of fileRoot.querySelectorAll("li")) {
+            entry.classList.remove("search-hidden");
+        }
+    } else {
+        const anythingFound = filterFileList(fileRoot, searchTerm);
+        if (!anythingFound) {
+            searchNothingFoundBox.classList.add("shown");
+        } else {
+            searchNothingFoundBox.classList.remove("shown");
+        }
+    }
+});
+
+/**
+ * @param {HTMLUListElement} list
+ * @param {string} searchTerm
+ */
+function filterFileList(list, searchTerm) {
+    let anythingInListPasses = false;
+    for (const li of list.children) {
+        if (li.dataset.path.includes(searchTerm)) {
+            anythingInListPasses = true;
+            li.classList.remove("search-hidden");
+        } else {
+            if (li.dataset.type === "file") {
+                // Non-matching files just get hidden.
+                li.classList.add("search-hidden");
+            } else {
+                // Non-matching directories should show if they have some shown content.
+                // li -> details -> ul
+                const sublist = li.querySelector(":scope > details > ul");
+                if (!filterFileList(sublist, searchTerm)) {
+                    li.classList.add("search-hidden");
+                } else {
+                    anythingInListPasses = true;
+                    li.classList.remove("search-hidden");
+                    // this is shown only because of the content;
+                    // if the search term's long enough, we can helpfully reveal it
+                    if (searchTerm.length >= 4) {
+                        /** @type HTMLDetailsElement */
+                        const details = sublist.parentElement;
+                        details.open = true;
+                    }
+                }
+            }
+        }
+    }
+
+    return anythingInListPasses;
+}
 
 function buildFileList(children, listElement, basePath = "/") {
     for (const entry of children) {
@@ -92,14 +151,11 @@ function buildFileList(children, listElement, basePath = "/") {
 
 /** @param {HTMLUListElement} list */
 function sortFileList(list) {
-    console.log(sortDirection, folderPosition);
     const listItems = Array.from(list.children);
-    console.log("before sorting:", listItems);
     listItems.sort((/** @type HTMLLIElement */ a, /** @type HTMLLIElement */ b) => {
         const aType = a.dataset.type;
         const bType = b.dataset.type;
         const nameResult = a.dataset.path.localeCompare(b.dataset.path) * (sortDirection == "ascending" ? 1 : -1);
-        console.log(aType, bType);
 
         if (folderPosition == "mixed") {
             return nameResult;
@@ -117,7 +173,6 @@ function sortFileList(list) {
             }
         }
     });
-    console.log("after sorting:", listItems);
     list.replaceChildren(...listItems);
 }
 
