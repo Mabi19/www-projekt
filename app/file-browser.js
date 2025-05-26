@@ -340,8 +340,12 @@ function makeFileEntry(basePath, entry) {
             const movedLi = fileRoot.querySelector(`li[data-path="${CSS.escape(sourcePath)}"]`);
             const sourceName = sourcePath.split("/").at(-1);
             const destDir = li.dataset.path;
+            const destPath = destDir + "/" + sourceName;
+            if (sourcePath === destPath) {
+                return;
+            }
             console.log("source", movedLi, "dest", li);
-            moveByListItem(movedLi, destDir + "/" + sourceName);
+            moveByListItem(movedLi, destPath);
         })
     }
 
@@ -368,9 +372,12 @@ fileRoot.addEventListener("drop", (ev) => {
 
     const movedLi = fileRoot.querySelector(`li[data-path="${CSS.escape(sourcePath)}"]`);
     const sourceName = sourcePath.split("/").at(-1);
-    const destDir = "";
+    const destPath = "/" + sourceName;
+    if (sourcePath === destPath) {
+        return;
+    }
     console.log("source", movedLi, "dest", fileRoot);
-    moveByListItem(movedLi, destDir + "/" + sourceName);
+    moveByListItem(movedLi, destPath);
 });
 
 function buildFileList(children, listElement, basePath = "/") {

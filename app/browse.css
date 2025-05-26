@@ -5,6 +5,11 @@ main {
     padding: .5rem;
 }
 
+#file-root {
+    /* this allows for dropping when there are only folders */
+    padding-bottom: 1rem;
+}
+
 .directory-list {
     margin: 0;
     padding-left: 0;
@@ -27,7 +32,7 @@ main {
 }
 
 /* Hack to make DnD work better with clickable things, which would normally consume the corresponding events. */
-.drag-active .directory-list li, .drag-active file-root {
+.drag-active li[data-type="directory"], .drag-active #file-root {
     position: relative;
 
     &::after {
@@ -36,6 +41,14 @@ main {
         position: absolute;
         inset: 0;
     }
+}
+
+.drag-active li[data-type="directory"]::after {
+    z-index: 11;
+}
+
+.drag-active #file-root::after {
+    z-index: 10;
 }
 
 
