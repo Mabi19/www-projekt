@@ -121,6 +121,35 @@ app.post("/delete", async (c) => {
     } catch (_) {
         return c.text("ERR_NOT_FOUND", 404);
     }
+});
+app.post("/move", async (c) => {
+    const username = getCookie(c, "user");
+    if (!username) {
+        throw new HTTPException(401);
+    }
+
+    const { from, to } = await c.req.parseBody();
+    if (typeof from !== "string" || typeof to !== "string") {
+        throw new HTTPException(400);
+    }
+
+    try {
+        await Deno.stat(`./data/${username}${from}`);
+    } catch (_) {
+        return c.text("ERR_NOT_FOUND", 404);
+    }
+
+    try {
+        await Deno.stat(`./data/${username}${to}`);
+        return c.text("ERR_ALREADY_EXISTS", 409);
+    } catch (_) {
+        // this space intentionally left blank
+    }
+
+    await Deno.rename(`./data/${username}${from}`, `./data/${username}${to}`);
+    return c.json([
+        { type: "move", from, to },
+    ])
 })
 app.use("/data/*", serveStatic({ root: "./" }));
 app.use("*", serveStatic({ root: "./app" }));

@@ -42,6 +42,17 @@
     }
 }
 
+#file-action-area.rename {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: .25rem;
+
+    button {
+        display: block;
+        text-align: center;
+    }
+}
+
 img#file-detail-preview {
     display: block;
     border-radius: .25rem;

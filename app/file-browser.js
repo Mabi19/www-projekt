@@ -1,4 +1,4 @@
-import { openFileDialog, setDeleteFileFunc } from "./file-dialog.js";
+import { openFileDialog, setDeleteFileFunc, setRenameFileFunc } from "./file-dialog.js";
 import { IMAGE_EXTENSIONS } from "./file-types.js";
 
 const fileRoot = document.querySelector("#file-root");
@@ -137,10 +137,38 @@ setDeleteFileFunc((path) => {
     deleteFileByListItem(li);
 });
 
+function moveByListItem(li, destination) {
+    console.log(destination);
+    const from = li.dataset.path;
+    const fd = new FormData();
+    fd.append("from", from);
+    fd.append("to", destination);
+    fetch("/move", { method: "POST", body: fd })
+        .then(async (response) => {
+            if (response.status === 404) {
+                // Not Found
+                alert("Błąd: taki plik nie istnieje");
+            } else if (response.status == 409) {
+                // Conflict
+                alert("Błąd: już istnieje plik o takiej nazwie");
+            } else {
+                applyFileDiff(await response.json());
+            }
+        });
+}
+
+setRenameFileFunc((path, newName) => {
+    const li = fileRoot.querySelector(`li[data-path="${CSS.escape(path)}"]`);
+    const splitOldPath = path.split("/");
+    const newPath = [...splitOldPath.slice(0, -1), newName].join("/");
+    moveByListItem(li, newPath);
+})
+
 /**
  * @typedef {{ type: "create", folder: string, name: string, entryType: string }} CreateInstruction
  * @typedef {{ type: "remove", path: string }} RemoveInstruction
- * @typedef {Array<CreateInstruction | RemoveInstruction>} InstructionList
+ * @typedef {{ type: "move", from: string, to: string }} MoveInstruction
+ * @typedef {Array<CreateInstruction | RemoveInstruction | MoveInstruction>} InstructionList
  */
 
 /**
@@ -166,9 +194,27 @@ function applyFileDiff(diff) {
                 break;
             case "remove":
                 const { path } = instruction;
-                const li = fileRoot.querySelector(`li[data-path="${CSS.escape(path)}"]`);
-                li.remove();
+                const removedLi = fileRoot.querySelector(`li[data-path="${CSS.escape(path)}"]`);
+                removedLi.remove();
                 // removing will never break sorting
+                break;
+            case "move":
+                const { from, to } = instruction;
+                const movedLi = fileRoot.querySelector(`li[data-path="${CSS.escape(from)}"]`);
+                if (movedLi.dataset.type === "directory") {
+                    alert("Przenoszenie folderów nie jest wspierane");
+                    break;
+                }
+                movedLi.dataset.path = to;
+                movedLi.remove();
+
+                const splitNewPath = to.split("/");
+                const folderPath = splitNewPath.slice(0, -1).join("/");
+                const newName = splitNewPath.at(-1);
+                movedLi.querySelector(".filename").textContent = newName;
+                const targetFolderList = folderPath === "/" ? fileRoot : fileRoot.querySelector(`li[data-path="${CSS.escape(folderPath)}"] > details > ul.directory-list`);
+                targetFolderList.appendChild(movedLi);
+                sortFileList(targetFolderList);
                 break;
             default:
                 console.log(instruction);

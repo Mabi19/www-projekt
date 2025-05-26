@@ -7,6 +7,7 @@ const actionArea = fileDetailDialog.querySelector("#file-action-area");
 const fileDetailPath = fileDetailDialog.querySelector("#file-detail-path");
 const fileDetailDownload = fileDetailDialog.querySelector("#file-detail-download");
 const fileDetailShare = fileDetailDialog.querySelector("#file-detail-share");
+const fileDetailRename = fileDetailDialog.querySelector("#file-detail-rename");
 const fileDetailDelete = fileDetailDialog.querySelector("#file-detail-delete");
 fileDetailDialog.querySelector(".header > button")?.addEventListener("click", () => fileDetailDialog.close());
 
@@ -24,6 +25,31 @@ fileDetailShare?.addEventListener("click", () => {
     actionArea.className = "share";
     actionArea.replaceChildren(pre, copyButton);
 });
+
+fileDetailRename?.addEventListener("click", () => {
+    const label = document.createElement("label");
+    label.for = "file-detail-new-name";
+    label.textContent = "Nowa nazwa";
+
+    const input = document.createElement("input");
+    input.id = "file-detail-new-name";
+    input.value = currentDialogPath.split("/").at(-1);
+
+    const submit = document.createElement("button");
+    submit.textContent = "Zmień nazwę";
+    submit.classList.add("accent");
+    submit.addEventListener("click", () => {
+        if (!input.value) {
+            return;
+        }
+
+        renameFileFunc(currentDialogPath, input.value);
+        fileDetailDialog.close();
+    })
+
+    actionArea.className = "rename";
+    actionArea.replaceChildren(label, input, submit);
+})
 
 fileDetailDelete?.addEventListener("click", () => {
     const confirmText = document.createElement("div");
@@ -48,7 +74,7 @@ fileDetailDelete?.addEventListener("click", () => {
 
     actionArea.className = "delete";
     actionArea.replaceChildren(confirmText, confirmYes, confirmNo);
-})
+});
 
 /** @type string */
 let currentDialogPath;
@@ -101,6 +127,12 @@ export function openFileDialog(path) {
 // Set by file-browser.js.
 /** @type (path: string) => void */
 let deleteFileFunc;
+/** @type (path: string, newName: string) => void */
+let renameFileFunc;
 export function setDeleteFileFunc(func) {
     deleteFileFunc = func;
+}
+
+export function setRenameFileFunc(func) {
+    renameFileFunc = func;
 }
