@@ -45,6 +45,7 @@ button:not(.raw), .button {
     border-radius: .25rem;
     padding: .25rem;
     text-decoration: none;
+    cursor: pointer;
 
     display: flex;
     flex-flow: row nowrap;
@@ -107,6 +108,10 @@ button:not(.raw), .button {
 button {
     font: inherit;
     cursor: pointer;
+}
+
+input {
+    font: inherit;
 }
 
 body {

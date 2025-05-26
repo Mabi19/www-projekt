@@ -82,6 +82,28 @@ app.post("/upload", async (c) => {
 
     throw new HTTPException(500);
 });
+app.post("/mkdir", async (c) => {
+    const username = getCookie(c, "user");
+    if (!username) {
+        throw new HTTPException(401);
+    }
+
+    const { name, "target-folder": targetFolder } = await c.req.parseBody();
+    if (typeof name !== "string" || typeof targetFolder !== "string") {
+        throw new HTTPException(400);
+    }
+
+    if (!targetFolder.startsWith("/")) {
+        throw new HTTPException(400);
+    }
+
+    try {
+        await Deno.mkdir(`./data/${username}${targetFolder}/${name}`);
+        return c.json([{ type: "create", folder: targetFolder, name, entryType: "directory" }]);
+    } catch (_) {
+        return c.text("ERR_ALREADY_EXISTS", 409);
+    }
+})
 app.use("/data/*", serveStatic({ root: "./" }));
 app.use("*", serveStatic({ root: "./app" }));
 Deno.serve(app.fetch);

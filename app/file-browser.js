@@ -75,6 +75,44 @@ uploadFileInput.addEventListener("change", () => {
         });
 });
 
+const createFolderDialog = document.querySelector("#create-folder");
+/** @type HTMLFormElement */
+const createFolderForm = document.querySelector("#create-folder-form");
+const createFolderNameInput = createFolderForm.elements.namedItem("new-folder-name");
+const createFolderResult = document.querySelector("#create-folder-result");
+const createFolderButton = document.querySelector("#create-folder-button");
+createFolderForm.addEventListener("submit", (ev) => {
+    ev.preventDefault();
+    createFolderButton.disabled = true;
+
+    const name = createFolderNameInput.value;
+
+    const fd = new FormData();
+    fd.append("name", name);
+    fd.append("target-folder", "/");
+    fetch("/mkdir", { method: "POST", body: fd })
+        .then(async (response) => {
+            if (response.status === 409) {
+                // Conflict
+                createFolderResult.textContent = "Folder o takiej nazwie już istnieje.";
+            } else {
+                applyFileDiff(await response.json());
+                createFolderDialog.close();
+            }
+            createFolderButton.disabled = false;
+        })
+        .catch((e) => {
+            console.log(e);
+            alert("Wystąpił błąd podczas wgrywania pliku.");
+            createFolderButton.disabled = false;
+        });
+});
+createFolderButton.addEventListener("click", () => {
+    createFolderNameInput.value = "";
+    createFolderResult.textContent = "";
+    createFolderDialog.showModal();
+});
+
 /**
  * @typedef {{ type: "create", folder: string, name: string, entryType: string }} CreateInstruction
  * @typedef {Array<CreateInstruction>} InstructionList

@@ -31,7 +31,7 @@
                     <span class="material-symbols-rounded">upload</span>
                     <span>Wgraj plik</span>
                 </button>
-                <button class="material-symbols-rounded" title="Stwórz folder">create_new_folder</button>
+                <button class="material-symbols-rounded" title="Stwórz nowy folder" id="create-folder-button">create_new_folder</button>
             </div>
             <form class="file-controls-group" id="controls-sorting">
                 <span class="material-symbols-rounded">sort</span>
@@ -112,6 +112,20 @@
             </div>
             <div id="file-action-area"></div>
         </div>
+    </dialog>
+
+    <dialog id="create-folder">
+        <div class="header">
+            <span>Stwórz nowy folder</span>
+            <div class="spacer"></div>
+            <button class="flat material-symbols-rounded">close</button>
+        </div>
+        <form id="create-folder-form" class="content">
+            <label for="new-folder-name">Nazwa nowego folderu</label>
+            <input type="text" id="new-folder-name" required>
+            <input type="submit" value="Utwórz" class="button accent">
+            <div id="create-folder-result"></div>
+        </form>
     </dialog>
 </body>
 </html>
