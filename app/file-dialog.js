@@ -23,8 +23,34 @@ fileDetailShare?.addEventListener("click", () => {
 
     actionArea.className = "share";
     actionArea.replaceChildren(pre, copyButton);
+});
+
+fileDetailDelete?.addEventListener("click", () => {
+    const confirmText = document.createElement("div");
+    confirmText.classList.add("file-delete-text");
+    confirmText.textContent = `Czy na pewno chcesz usunąć '${currentDialogPath}'?`;
+
+    const confirmYes = document.createElement("button");
+    confirmYes.classList.add("destructive", "file-delete-yes");
+    confirmYes.textContent = "Usuń";
+    confirmYes.addEventListener("click", () => {
+        deleteFileFunc(currentDialogPath);
+        fileDetailDialog.close();
+    });
+
+    const confirmNo = document.createElement("button");
+    confirmNo.classList.add("file-delete-no");
+    confirmNo.textContent = "Anuluj";
+    confirmNo.addEventListener("click", () => {
+        actionArea.className = "";
+        actionArea.replaceChildren();
+    })
+
+    actionArea.className = "delete";
+    actionArea.replaceChildren(confirmText, confirmYes, confirmNo);
 })
 
+/** @type string */
 let currentDialogPath;
 /**
  * @param {string} username
@@ -69,4 +95,12 @@ export function createFileDialog(username, path) {
 export function openFileDialog(path) {
     createFileDialog(username, path);
     fileDetailDialog.showModal();
+}
+
+// This is a hack, but I don't have time to make this not spaghetti.
+// Set by file-browser.js.
+/** @type (path: string) => void */
+let deleteFileFunc;
+export function setDeleteFileFunc(func) {
+    deleteFileFunc = func;
 }

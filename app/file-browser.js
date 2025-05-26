@@ -1,4 +1,4 @@
-import { openFileDialog } from "./file-dialog.js";
+import { openFileDialog, setDeleteFileFunc } from "./file-dialog.js";
 import { IMAGE_EXTENSIONS } from "./file-types.js";
 
 const fileRoot = document.querySelector("#file-root");
@@ -122,7 +122,7 @@ function deleteFileByListItem(li) {
         .then(async (response) => {
             if (response.status === 404) {
                 // Not Found
-                alert("Error: This file doesn't exist!");
+                alert("Błąd: taki plik nie istnieje");
             } else {
                 applyFileDiff(await response.json());
             }
@@ -131,6 +131,11 @@ function deleteFileByListItem(li) {
             alert("Wystąpił błąd podczas usuwania pliku");
         })
 }
+// Fill in the file-dialog.js's callback. Unfortunately I don't have time to refactor this properly.
+setDeleteFileFunc((path) => {
+    const li = fileRoot.querySelector(`li[data-path="${CSS.escape(path)}"]`);
+    deleteFileByListItem(li);
+});
 
 /**
  * @typedef {{ type: "create", folder: string, name: string, entryType: string }} CreateInstruction

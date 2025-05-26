@@ -17,6 +17,31 @@
     }
 }
 
+#file-action-area.delete {
+    display: grid;
+    grid-template-areas:
+        "text text"
+        "yes no";
+    gap: .5rem;
+
+    .file-delete-text {
+        grid-area: text;
+    }
+
+    button {
+        display: block;
+        text-align: center;
+    }
+
+    .file-delete-yes {
+        grid-area: yes;
+    }
+
+    .file-delete-no {
+        grid-area: no;
+    }
+}
+
 img#file-detail-preview {
     display: block;
     border-radius: .25rem;
