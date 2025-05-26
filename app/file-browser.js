@@ -112,10 +112,30 @@ createFolderButton.addEventListener("click", () => {
     createFolderResult.textContent = "";
     createFolderDialog.showModal();
 });
+createFolderDialog.querySelector(".header > button").addEventListener("click", () => createFolderDialog.close());
+
+function deleteFileByListItem(li) {
+    const path = li.dataset.path;
+    const fd = new FormData();
+    fd.append("path", path);
+    fetch("/delete", { method: "POST", body: fd })
+        .then(async (response) => {
+            if (response.status === 404) {
+                // Not Found
+                alert("Error: This file doesn't exist!");
+            } else {
+                applyFileDiff(await response.json());
+            }
+        }).catch((e) => {
+            console.log(e);
+            alert("Wystąpił błąd podczas usuwania pliku");
+        })
+}
 
 /**
  * @typedef {{ type: "create", folder: string, name: string, entryType: string }} CreateInstruction
- * @typedef {Array<CreateInstruction>} InstructionList
+ * @typedef {{ type: "remove", path: string }} RemoveInstruction
+ * @typedef {Array<CreateInstruction | RemoveInstruction>} InstructionList
  */
 
 /**
@@ -139,6 +159,12 @@ function applyFileDiff(diff) {
                 sortFileList(folderList);
                 // intentionally not re-filtering: a newly uploaded file not showing would be weird
                 break;
+            case "remove":
+                const { path } = instruction;
+                const li = fileRoot.querySelector(`li[data-path="${CSS.escape(path)}"]`);
+                li.remove();
+                // removing will never break sorting
+                break;
             default:
                 console.log(instruction);
                 alert("Unimplemented server command of type " + instruction.type);
@@ -158,6 +184,7 @@ function makeFileEntry(basePath, entry) {
     li.dataset.type = entry.type;
 
     let mainRow;
+    // build out the general structure
     if (entry.type === "file") {
         mainRow = document.createElement("button");
         mainRow.classList.add("raw");
@@ -175,10 +202,33 @@ function makeFileEntry(basePath, entry) {
         buildFileList(entry.children, sublist, basePath + entry.name + "/");
         details.appendChild(sublist);
 
+        const emptyOptions = document.createElement("div");
+        emptyOptions.classList.add("directory-empty-options");
+
+        const emptyOptionsText = document.createElement("span");
+        emptyOptionsText.textContent = "Ten folder jest pusty.";
+        emptyOptions.appendChild(emptyOptionsText);
+
+        const emptyOptionsButton = document.createElement("button");
+        emptyOptionsButton.classList.add("destructive");
+        const emptyOptionsButtonIcon = document.createElement("span");
+        emptyOptionsButtonIcon.classList.add("material-symbols-rounded");
+        emptyOptionsButtonIcon.textContent = "delete";
+        emptyOptionsButton.appendChild(emptyOptionsButtonIcon);
+        const emptyOptionsButtonText = document.createElement("span");
+        emptyOptionsButtonText.textContent = "Usuń";
+        emptyOptionsButton.appendChild(emptyOptionsButtonText);
+
+        emptyOptionsButton.addEventListener("click", () => deleteFileByListItem(li));
+        emptyOptions.appendChild(emptyOptionsButton);
+
+        details.appendChild(emptyOptions);
+
         li.appendChild(details);
     }
     mainRow.classList.add("entry-main");
 
+    // fill stuff in
     if (entry.type == "directory") {
         const iconClosed = document.createElement("span");
         iconClosed.classList.add("material-symbols-rounded", "directory-icon-closed");

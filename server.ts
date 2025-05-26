@@ -103,6 +103,24 @@ app.post("/mkdir", async (c) => {
     } catch (_) {
         return c.text("ERR_ALREADY_EXISTS", 409);
     }
+});
+app.post("/delete", async (c) => {
+    const username = getCookie(c, "user");
+    if (!username) {
+        throw new HTTPException(401);
+    }
+
+    const { path } = await c.req.parseBody();
+    if (typeof path !== "string" || !path.startsWith("/")) {
+        throw new HTTPException(400);
+    }
+
+    try {
+        await Deno.remove(`./data/${username}${path}`);
+        return c.json([{ type: "remove", path }]);
+    } catch (_) {
+        return c.text("ERR_NOT_FOUND", 404);
+    }
 })
 app.use("/data/*", serveStatic({ root: "./" }));
 app.use("*", serveStatic({ root: "./app" }));

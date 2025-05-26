@@ -21,6 +21,22 @@ main {
     display: none;
 }
 
+.directory-list:not(#file-root) {
+    margin-left: 2rem;
+}
+
+.directory-empty-options {
+    display: none;
+    flex-flow: row nowrap;
+    align-items: center;
+    gap: .5rem;
+    margin-left: 2rem;
+}
+
+.directory-list:empty + .directory-empty-options {
+    display: flex;
+}
+
 .entry-main {
     display: block;
     width: 100%;
@@ -60,10 +76,6 @@ details > .directory-list {
 
 details[open] > .directory-list {
     height: auto;
-}
-
-.directory-list:not(#file-root) {
-    margin-left: 2rem;
 }
 
 .directory-icon-open, .directory-icon-closed {
