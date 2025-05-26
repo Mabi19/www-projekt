@@ -51,33 +51,34 @@ button:not(.raw), .button {
     align-items: center;
     gap: .25rem;
 
-    background-color: rgb(from var(--text) r g b / 20%);
+    --button-bg: rgb(from var(--text) r g b / 20%);
+    --button-bg-hover: rgb(from var(--text) r g b / 30%);
+    background: var(--button-bg);
 
-    &:hover {
-        background-color: rgb(from var(--text) r g b / 30%);
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    &:hover:not(:disabled) {
+        background-color: var(--button-bg-hover);
     }
 
     &.flat {
-        background: none;
-        &:hover {
-            background-color: rgb(255 255 255 / 20%);
-        }
+        --button-bg: none;
+        --button-bg-hover: rgb(255 255 255 / 20%);
     }
 
     &.accent {
-        background-color: var(--accent);
         color: whitesmoke;
-        &:hover {
-            background-color: rgb(from var(--accent) r g b / 75%);
-        }
+        --button-bg: var(--accent);
+        --button-bg-hover: rgb(from var(--accent) r g b / 75%);
     }
 
     &.destructive {
         color: whitesmoke;
-        background-color: tomato;
-        &:hover {
-            background-color: rgb(from tomato r g b / 75%);
-        }
+        --button-bg: tomato;
+        --button-bg-hover: rgb(from tomato r g b / 75%);
     }
 }
 
