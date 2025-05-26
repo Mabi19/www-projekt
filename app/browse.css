@@ -17,6 +17,28 @@ main {
     }
 }
 
+.dragged {
+    opacity: 0.5;
+}
+
+.drag-active .drag-over {
+    outline: 1px solid var(--accent-light);
+    border-radius: .5rem;
+}
+
+/* Hack to make DnD work better with clickable things, which would normally consume the corresponding events. */
+.drag-active .directory-list li, .drag-active file-root {
+    position: relative;
+
+    &::after {
+        display: block;
+        content: "";
+        position: absolute;
+        inset: 0;
+    }
+}
+
+
 .directory-list li.search-hidden {
     display: none;
 }

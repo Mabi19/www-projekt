@@ -212,7 +212,7 @@ function applyFileDiff(diff) {
                 const folderPath = splitNewPath.slice(0, -1).join("/");
                 const newName = splitNewPath.at(-1);
                 movedLi.querySelector(".filename").textContent = newName;
-                const targetFolderList = folderPath === "/" ? fileRoot : fileRoot.querySelector(`li[data-path="${CSS.escape(folderPath)}"] > details > ul.directory-list`);
+                const targetFolderList = folderPath === "" ? fileRoot : fileRoot.querySelector(`li[data-path="${CSS.escape(folderPath)}"] > details > ul.directory-list`);
                 targetFolderList.appendChild(movedLi);
                 sortFileList(targetFolderList);
                 break;
@@ -313,8 +313,65 @@ function makeFileEntry(basePath, entry) {
         mainRow.appendChild(name);
     }
 
+    // drag-and-drop
+    if (entry.type === "file") {
+        li.draggable = true;
+        li.addEventListener("dragstart", (ev) => {
+            li.classList.add("dragged");
+            // This class activates hidden ::after's over all the elements, which take inputs for dropping.
+            fileRoot.parentElement.classList.add("drag-active");
+            ev.dataTransfer.setData("application/x.ustronny-sejf-file", li.dataset.path);
+            ev.dataTransfer.effectAllowed = "move";
+        });
+        li.addEventListener("dragend", () => {
+            li.classList.remove("dragged");
+            fileRoot.parentElement.classList.remove("drag-active");
+        })
+    } else {
+        makeDropZone(li);
+        li.addEventListener("drop", (ev) => {
+            ev.preventDefault();
+            ev.stopPropagation();
+            const sourcePath = ev.dataTransfer.getData("application/x.ustronny-sejf-file");
+            console.log("drop", sourcePath);
+            li.firstElementChild.open = true;
+            li.classList.remove("drag-over");
+
+            const movedLi = fileRoot.querySelector(`li[data-path="${CSS.escape(sourcePath)}"]`);
+            const sourceName = sourcePath.split("/").at(-1);
+            const destDir = li.dataset.path;
+            console.log("source", movedLi, "dest", li);
+            moveByListItem(movedLi, destDir + "/" + sourceName);
+        })
+    }
+
     return li;
 }
+
+function makeDropZone(elem) {
+    elem.addEventListener("dragover", (ev) => {
+        ev.preventDefault();
+        ev.dataTransfer.effectAllowed = "move";
+    });
+    elem.addEventListener("dragenter", () => { elem.classList.add("drag-over") });
+    elem.addEventListener("dragleave", () => { elem.classList.remove("drag-over") });
+}
+makeDropZone(fileRoot);
+fileRoot.addEventListener("drop", (ev) => {
+    ev.preventDefault();
+    ev.stopPropagation();
+    const sourcePath = ev.dataTransfer.getData("application/x.ustronny-sejf-file");
+    console.log("drop", sourcePath);
+    // the root is non-expandable
+    // fileRoot.firstElementChild.open = true;
+    fileRoot.classList.remove("drag-over");
+
+    const movedLi = fileRoot.querySelector(`li[data-path="${CSS.escape(sourcePath)}"]`);
+    const sourceName = sourcePath.split("/").at(-1);
+    const destDir = "";
+    console.log("source", movedLi, "dest", fileRoot);
+    moveByListItem(movedLi, destDir + "/" + sourceName);
+});
 
 function buildFileList(children, listElement, basePath = "/") {
     for (const entry of children) {
