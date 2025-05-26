@@ -50,6 +50,38 @@ app.get("/list", async (c) => {
 
     return c.json(await getFileList(`./data/${username}`));
 })
+app.post("/upload", async (c) => {
+    const username = getCookie(c, "user");
+    if (!username) {
+        throw new HTTPException(401);
+    }
+
+    const { name, "target-folder": targetFolder, data } = await c.req.parseBody();
+    if (typeof name !== "string" || typeof targetFolder !== "string" || !(data instanceof File)) {
+        throw new HTTPException(400);
+    }
+
+    if (!targetFolder.startsWith("/")) {
+        throw new HTTPException(400);
+    }
+
+    const [namePre, ...nameRest] = name.split(".");
+    const nameExt = nameRest ? "." + nameRest.join(".") : "";
+    for (let counter = 0; counter < 16; counter++) {
+        const dedupedName = counter > 0 ? `${namePre} (${counter})` : namePre;
+        const path = `./data/${username}${targetFolder}/${dedupedName}${nameExt}`;
+        try {
+            await Deno.writeFile(path, await data.bytes(), { createNew: true });
+            // success!
+            return c.json([{ type: "create", folder: targetFolder, name: `${dedupedName}${nameExt}`, entryType: "file" }]);
+        } catch (_) {
+            // name is already used up
+            continue;
+        }
+    }
+
+    throw new HTTPException(500);
+});
 app.use("/data/*", serveStatic({ root: "./" }));
 app.use("*", serveStatic({ root: "./app" }));
 Deno.serve(app.fetch);

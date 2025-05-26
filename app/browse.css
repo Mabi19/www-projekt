@@ -103,6 +103,10 @@ details:not([open]) > .entry-main > .directory-icon-open {
     border-right: 1px solid #7f7f7f7f;
 }
 
+#upload-file-input {
+    display: none;
+}
+
 #search-nothing-found {
     text-align: center;
     display: none;

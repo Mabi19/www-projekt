@@ -47,6 +47,143 @@ searchInput.addEventListener("input", () => {
     }
 });
 
+/** @type HTMLInputElement */
+const uploadFileInput = document.querySelector("#upload-file-input");
+const uploadButton = document.querySelector("#upload-button");
+uploadButton.addEventListener("click", () => uploadFileInput.click());
+uploadFileInput.addEventListener("change", () => {
+    const file = uploadFileInput.files[0];
+    if (!file) {
+        return;
+    }
+
+    uploadButton.disabled = true;
+    const fd = new FormData();
+    fd.append("name", file.name);
+    fd.append("target-folder", "/");
+    fd.append("data", file);
+    fetch("/upload", { method: "POST", body: fd })
+        .then((response) => response.json())
+        .then((result) => {
+            uploadButton.disabled = false;
+            applyFileDiff(result);
+        })
+        .catch((e) => {
+            console.log(e);
+            alert("Wystąpił błąd podczas wgrywania pliku.");
+            uploadButton.disabled = false;
+        });
+});
+
+/**
+ * @typedef {{ type: "create", folder: string, name: string, entryType: string }} CreateInstruction
+ * @typedef {Array<CreateInstruction>} InstructionList
+ */
+
+/**
+ * Apply some instructions from the server onto the file view DOM.
+ * @param {InstructionList} diff The instructions from the server.
+ */
+function applyFileDiff(diff) {
+    for (const instruction of diff) {
+        switch (instruction.type) {
+            case "create":
+                const { folder, name, entryType } = instruction;
+                const folderList = folder === "/" ? fileRoot : fileRoot.querySelector(`li[data-path="${CSS.escape(folder)}"] > details > ul.directory-list`);
+                console.log(folderList);
+                const newLi = makeFileEntry(folder, {
+                    name,
+                    type: entryType,
+                    // not necessary if file, but doesn't hurt
+                    children: [],
+                });
+                folderList.appendChild(newLi);
+                sortFileList(folderList);
+                // intentionally not re-filtering: a newly uploaded file not showing would be weird
+                break;
+            default:
+                console.log(instruction);
+                alert("Unimplemented server command of type " + instruction.type);
+                break;
+        }
+    }
+}
+
+/**
+ * @param {string} basePath The path to the working directory
+ * @param entry The file entry to create.
+ * @return {HTMLLIElement} The resulting HTML element.
+ */
+function makeFileEntry(basePath, entry) {
+    const li = document.createElement("li");
+    li.dataset.path = basePath + entry.name;
+    li.dataset.type = entry.type;
+
+    let mainRow;
+    if (entry.type === "file") {
+        mainRow = document.createElement("button");
+        mainRow.classList.add("raw");
+        mainRow.addEventListener("click", () => openFileDialog(li.dataset.path));
+
+        li.appendChild(mainRow);
+    } else if (entry.type === "directory") {
+        const details = document.createElement("details");
+        mainRow = document.createElement("summary");
+        mainRow.classList.add("entry-main");
+        details.appendChild(mainRow);
+
+        const sublist = document.createElement("ul");
+        sublist.classList.add("directory-list");
+        buildFileList(entry.children, sublist, basePath + entry.name + "/");
+        details.appendChild(sublist);
+
+        li.appendChild(details);
+    }
+    mainRow.classList.add("entry-main");
+
+    if (entry.type == "directory") {
+        const iconClosed = document.createElement("span");
+        iconClosed.classList.add("material-symbols-rounded", "directory-icon-closed");
+        iconClosed.textContent = "folder";
+
+        const iconOpen = document.createElement("span");
+        iconOpen.classList.add("material-symbols-rounded", "directory-icon-open");
+        iconOpen.textContent = "folder_open";
+
+        mainRow.append(iconClosed, iconOpen);
+
+        const name = document.createElement("span");
+        name.textContent = entry.name;
+        mainRow.appendChild(name);
+    } else {
+        const icon = document.createElement("span");
+        icon.classList.add("material-symbols-rounded");
+        const fileExtension = entry.name.split(".").at(-1);
+        if (IMAGE_EXTENSIONS.has(fileExtension)) {
+            icon.classList.add("icon-picture");
+            icon.textContent = "image";
+        } else {
+            icon.textContent = "draft";
+        }
+
+        mainRow.appendChild(icon);
+
+        const name = document.createElement("span");
+        name.classList.add("filename");
+        name.textContent = entry.name;
+        mainRow.appendChild(name);
+    }
+
+    return li;
+}
+
+function buildFileList(children, listElement, basePath = "/") {
+    for (const entry of children) {
+        const li = makeFileEntry(basePath, entry);
+        listElement.appendChild(li);
+    }
+}
+
 /**
  * @param {HTMLUListElement} list
  * @param {string} searchTerm
@@ -85,71 +222,6 @@ function filterFileList(list, searchTerm) {
     return anythingInListPasses;
 }
 
-function buildFileList(children, listElement, basePath = "/") {
-    for (const entry of children) {
-        const li = document.createElement("li");
-        li.dataset.path = basePath + entry.name;
-        li.dataset.type = entry.type;
-
-        let mainRow;
-        if (entry.type === "file") {
-            mainRow = document.createElement("button");
-            mainRow.classList.add("raw");
-            mainRow.addEventListener("click", () => openFileDialog(li.dataset.path));
-
-            li.appendChild(mainRow);
-        } else if (entry.type === "directory") {
-            const details = document.createElement("details");
-            mainRow = document.createElement("summary");
-            mainRow.classList.add("entry-main");
-            details.appendChild(mainRow);
-
-            const sublist = document.createElement("ul");
-            sublist.classList.add("directory-list");
-            buildFileList(entry.children, sublist, basePath + entry.name + "/");
-            details.appendChild(sublist);
-
-            li.appendChild(details);
-        }
-        mainRow.classList.add("entry-main");
-
-        if (entry.type == "directory") {
-            const iconClosed = document.createElement("span");
-            iconClosed.classList.add("material-symbols-rounded", "directory-icon-closed");
-            iconClosed.textContent = "folder";
-
-            const iconOpen = document.createElement("span");
-            iconOpen.classList.add("material-symbols-rounded", "directory-icon-open");
-            iconOpen.textContent = "folder_open";
-
-            mainRow.append(iconClosed, iconOpen);
-
-            const name = document.createElement("span");
-            name.textContent = entry.name;
-            mainRow.appendChild(name);
-        } else {
-            const icon = document.createElement("span");
-            icon.classList.add("material-symbols-rounded");
-            const fileExtension = entry.name.split(".").at(-1);
-            if (IMAGE_EXTENSIONS.has(fileExtension)) {
-                icon.classList.add("icon-picture");
-                icon.textContent = "image";
-            } else {
-                icon.textContent = "draft";
-            }
-
-            mainRow.appendChild(icon);
-
-            const name = document.createElement("span");
-            name.classList.add("filename");
-            name.textContent = entry.name;
-            mainRow.appendChild(name);
-        }
-
-        listElement.appendChild(li);
-    }
-}
-
 /** @param {HTMLUListElement} list */
 function sortFileList(list) {
     const listItems = Array.from(list.children);
@@ -181,7 +253,6 @@ function sortAllFileLists() {
     sortFileList(fileRoot);
     fileRoot.querySelectorAll(".directory-list").forEach((el) => sortFileList(el));
 }
-
 
 
 let data;
