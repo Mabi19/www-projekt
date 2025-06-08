@@ -1,4 +1,4 @@
-import { username } from "./account.js";
+import { username } from "../auth/account.js";
 import { IMAGE_EXTENSIONS } from "./file-types.js";
 
 /** @type HTMLDialogElement */
