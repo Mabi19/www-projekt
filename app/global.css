@@ -95,6 +95,10 @@ button:not(.raw), .button {
     }
 }
 
+.hidden {
+    display: none;
+}
+
 .icon-filled {
     font-variation-settings:
         'FILL' 1,
