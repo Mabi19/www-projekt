@@ -35,30 +35,34 @@
                 <button class="material-symbols-rounded" title="Stwórz nowy folder" id="create-folder-button">create_new_folder</button>
             </div>
             <form class="file-controls-group" id="controls-sorting">
-                <span class="material-symbols-rounded">sort</span>
-                <strong>Sortowanie</strong>
-                <div>
-                    <input type="radio" name="sort-direction" id="sort-direction-ascending" value="ascending" checked>
-                    <label for="sort-direction-ascending">A-Z</label>
-                </div>
-                <div>
-                    <input type="radio" name="sort-direction" id="sort-direction-descending" value="descending">
-                    <label for="sort-direction-descending">Z-A</label>
+                <div class="controls-sorting-subgroup">
+                    <span class="material-symbols-rounded">sort</span>
+                    <strong>Sortowanie</strong>
+                    <div>
+                        <input type="radio" name="sort-direction" id="sort-direction-ascending" value="ascending" checked>
+                        <label for="sort-direction-ascending">A-Z</label>
+                    </div>
+                    <div>
+                        <input type="radio" name="sort-direction" id="sort-direction-descending" value="descending">
+                        <label for="sort-direction-descending">Z-A</label>
+                    </div>
                 </div>
                 <div class="divider"></div>
-                <span class="material-symbols-rounded">folder</span>
-                <strong>Foldery</strong>
-                <div>
-                    <input type="radio" name="folder-position" id="folder-position-start" value="start" checked>
-                    <label for="folder-position-start">na początku</label>
-                </div>
-                <div>
-                    <input type="radio" name="folder-position" id="folder-position-end" value="end">
-                    <label for="folder-position-end">na końcu</label>
-                </div>
-                <div>
-                    <input type="radio" name="folder-position" id="folder-position-mixed" value="mixed">
-                    <label for="folder-position-mixed">razem z plikami</label>
+                <div class="controls-sorting-subgroup">
+                    <span class="material-symbols-rounded">folder</span>
+                    <strong id="controls-sorting-directories-label">Foldery</strong>
+                    <div>
+                        <input type="radio" name="folder-position" id="folder-position-start" value="start" checked>
+                        <label for="folder-position-start">na górze</label>
+                    </div>
+                    <div>
+                        <input type="radio" name="folder-position" id="folder-position-end" value="end">
+                        <label for="folder-position-end">na dole</label>
+                    </div>
+                    <div>
+                        <input type="radio" name="folder-position" id="folder-position-mixed" value="mixed">
+                        <label for="folder-position-mixed">z plikami</label>
+                    </div>
                 </div>
             </form>
             <div class="file-controls-group">

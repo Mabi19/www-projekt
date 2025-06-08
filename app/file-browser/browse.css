@@ -135,7 +135,31 @@ details:not([open]) > .entry-main > .directory-icon-open {
     gap: .5rem;
 }
 
-.file-controls-group {
+.controls-sorting-subgroup {
+    display: contents;
+}
+
+@media (max-width: 800px) {
+    .controls-sorting-subgroup {
+        display: flex;
+    }
+
+    #controls-sorting {
+        display: contents;
+    }
+
+    #controls-sorting .divider {
+        display: none;
+    }
+}
+
+@media (max-width: 400px) {
+    #controls-sorting-directories-label {
+        display: none;
+    }
+}
+
+.file-controls-group, .controls-sorting-subgroup {
     display: flex;
     flex-flow: row nowrap;
     align-items: center;
