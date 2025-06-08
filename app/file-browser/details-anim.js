@@ -16,6 +16,7 @@ export function setUpFolderAnimations(details) {
                 duration: 250,
                 easing: "ease-out"
             });
+            content.style.overflow = "hidden";
             anim.addEventListener("finish", () => {
                 finishAnim();
             })
@@ -26,6 +27,7 @@ export function setUpFolderAnimations(details) {
                 duration: 250,
                 easing: "ease-out"
             });
+            content.style.overflow = "hidden";
             anim.addEventListener("finish", () => {
                 finishAnim();
                 details.open = false;
@@ -35,7 +37,7 @@ export function setUpFolderAnimations(details) {
 
     function finishAnim() {
         anim = null;
-        details.style.overflow = "auto";
+        content.style.overflow = "visible";
     }
 
     summary.addEventListener("click", (ev) => {
