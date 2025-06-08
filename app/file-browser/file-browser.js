@@ -1,3 +1,4 @@
+import { setUpFolderAnimations } from "./details-anim.js";
 import { openFileDialog, setDeleteFileFunc, setRenameFileFunc } from "./file-dialog.js";
 import { IMAGE_EXTENSIONS } from "./file-types.js";
 
@@ -252,6 +253,7 @@ function makeFileEntry(basePath, entry) {
         sublist.classList.add("directory-list");
         buildFileList(entry.children, sublist, basePath + entry.name + "/");
         details.appendChild(sublist);
+        setUpFolderAnimations(details);
 
         const emptyOptions = document.createElement("div");
         emptyOptions.classList.add("directory-empty-options");

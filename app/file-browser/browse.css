@@ -102,15 +102,7 @@ summary.entry-main {
 
 details > .directory-list {
     margin-top: .25rem;
-
     interpolate-size: allow-keywords;
-    transition: height 0.5s ease, content-visibility 0.5s ease allow-discrete;
-    height: 0;
-    overflow: clip;
-}
-
-details[open] > .directory-list {
-    height: auto;
 }
 
 .directory-icon-open, .directory-icon-closed {
