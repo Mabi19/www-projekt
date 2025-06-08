@@ -177,3 +177,39 @@ details:not([open]) > .entry-main > .directory-icon-open {
         display: block;
     }
 }
+
+#quick-terminal {
+    width: min(800px, 100vw);
+    margin: auto auto .25rem auto;
+
+    background-color: var(--bg-light);
+    border: var(--light-border);
+    padding: .25rem;
+    border-radius: .5rem;
+
+    &::backdrop {
+        backdrop-filter: none;
+    }
+}
+
+#quick-terminal-form {
+    font-family: monospace;
+    border-radius: .25rem;
+    padding: .25rem;
+    background-color: var(--bg);
+
+    display: flex;
+    flex-flow: row nowrap;
+
+    &::before {
+        white-space: pre;
+        content: "$ ";
+    }
+}
+
+#quick-terminal-input {
+    border: none;
+    outline: none;
+    background: none;
+    flex-grow: 1;
+}

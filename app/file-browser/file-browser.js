@@ -116,6 +116,75 @@ createFolderButton.addEventListener("click", () => {
 });
 createFolderDialog.querySelector(".header > button").addEventListener("click", () => closeDialogModal(createFolderDialog));
 
+/** @type HTMLDialogElement */
+const quickTerminal = document.querySelector("#quick-terminal");
+/** @type HTMLElement */
+const quickTerminalStatusBox = quickTerminal.querySelector("#quick-terminal-status");
+/** @type HTMLFormElement */
+const quickTerminalForm = quickTerminal.querySelector("#quick-terminal-form");
+quickTerminalForm.addEventListener("submit", (ev) => {
+    ev.preventDefault();
+    const command = quickTerminalInput.value.split(" ");
+    console.log(command);
+    if (command.length == 0) {
+        return;
+    }
+
+    function getFileLi(path) {
+        if (!path.startsWith("/")) {
+            path = "/" + path;
+        }
+
+        const el = fileRoot.querySelector(`li[data-path="${CSS.escape(path)}`);
+        if (!el) {
+            quickTerminalStatus("view: Nie istnieje plik o takiej nazwie");
+            return null;
+        }
+        if (el.dataset.type !== "file") {
+            quickTerminalStatus("view: To nie jest plik");
+            return null;
+        }
+        return el;
+    }
+
+    // TODO: pozostałe operacje: rm/remove, mv/move/rename, download/dl, share
+
+    const [operation, ...params] = command;
+    if (operation === "view" || operation === "cat") {
+        let [path] = params;
+        if (!path) {
+            quickTerminalStatus("view: Wymagana ścieżka do pliku");
+            return;
+        }
+        const li = getFileLi(path);
+        if (li) {
+            openFileDialog(li.dataset.path);
+            quickTerminal.close();
+        }
+    } else if (operation === "help") {
+        quickTerminalStatus("Dostępne polecenia: view <plik>, help");
+    } else {
+        quickTerminalStatus("Nieznane polecenie");
+    }
+})
+/** @type HTMLInputElement */
+const quickTerminalInput = quickTerminal.querySelector("#quick-terminal-input");
+document.body.addEventListener("keyup", (ev) => {
+    if (ev.ctrlKey && ev.key == " ") {
+        quickTerminal.showModal();
+        quickTerminalInput.value = "";
+        quickTerminalInput.focus();
+        quickTerminalStatusBox.classList.add("hidden");
+    }
+});
+
+quickTerminalInput.addEventListener("input", () => quickTerminalStatusBox.classList.add("hidden"));
+
+function quickTerminalStatus(text) {
+    quickTerminalStatusBox.classList.remove("hidden");
+    quickTerminalStatusBox.textContent = text;
+}
+
 function deleteFileByListItem(li) {
     const path = li.dataset.path;
     const fd = new FormData();
