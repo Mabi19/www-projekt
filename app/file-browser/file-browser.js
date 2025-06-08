@@ -1,3 +1,4 @@
+import { closeDialogModal, openDialogModal } from "../dialog.js";
 import { setUpFolderAnimations } from "./details-anim.js";
 import { openFileDialog, setDeleteFileFunc, setRenameFileFunc } from "./file-dialog.js";
 import { IMAGE_EXTENSIONS } from "./file-types.js";
@@ -98,7 +99,7 @@ createFolderForm.addEventListener("submit", (ev) => {
                 createFolderResult.textContent = "Folder o takiej nazwie już istnieje.";
             } else {
                 applyFileDiff(await response.json());
-                createFolderDialog.close();
+                closeDialogModal(createFolderDialog);
             }
             createFolderButton.disabled = false;
         })
@@ -111,9 +112,9 @@ createFolderForm.addEventListener("submit", (ev) => {
 createFolderButton.addEventListener("click", () => {
     createFolderNameInput.value = "";
     createFolderResult.textContent = "";
-    createFolderDialog.showModal();
+    openDialogModal(createFolderDialog);
 });
-createFolderDialog.querySelector(".header > button").addEventListener("click", () => createFolderDialog.close());
+createFolderDialog.querySelector(".header > button").addEventListener("click", () => closeDialogModal(createFolderDialog));
 
 function deleteFileByListItem(li) {
     const path = li.dataset.path;

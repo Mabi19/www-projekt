@@ -13,7 +13,7 @@ export function setUpFolderAnimations(details) {
             anim = content.animate({
                 height: [0, `${content.offsetHeight}px`]
             }, {
-                duration: 200,
+                duration: 250,
                 easing: "ease-out"
             });
             anim.addEventListener("finish", () => {
@@ -23,7 +23,7 @@ export function setUpFolderAnimations(details) {
             anim = content.animate({
                 height: [`${content.offsetHeight}px`, 0]
             }, {
-                duration: 200,
+                duration: 250,
                 easing: "ease-out"
             });
             anim.addEventListener("finish", () => {

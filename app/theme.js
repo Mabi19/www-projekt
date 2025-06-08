@@ -1,5 +1,8 @@
 let darkModeQuery = matchMedia("(prefers-color-scheme: dark)");
 
+let dialogModule;
+import("./dialog.js").then((mod) => dialogModule = mod);
+
 function updateTheme() {
     const THEMES = new Set(["light", "dark", "auto"]);
     const ACCENT_COLORS = new Set(["green", "purple", "pink"]);
@@ -45,9 +48,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         /** @type HTMLButtonElement */
         const closeButton = settingsDialog.querySelector(".header > button");
-        closeButton.addEventListener("click", () => settingsDialog.close());
+        closeButton.addEventListener("click", () => dialogModule.closeDialogModal(settingsDialog));
     }
 
     const settingsButton = document.querySelector("#settings-button");
-    settingsButton?.addEventListener("click", () => settingsDialog.showModal());
+    settingsButton?.addEventListener("click", () => dialogModule.openDialogModal(settingsDialog));
 });

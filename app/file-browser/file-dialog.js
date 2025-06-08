@@ -1,4 +1,5 @@
 import { username } from "../auth/account.js";
+import { closeDialogModal, openDialogModal } from "../dialog.js";
 import { IMAGE_EXTENSIONS } from "./file-types.js";
 
 /** @type HTMLDialogElement */
@@ -9,7 +10,7 @@ const fileDetailDownload = fileDetailDialog.querySelector("#file-detail-download
 const fileDetailShare = fileDetailDialog.querySelector("#file-detail-share");
 const fileDetailRename = fileDetailDialog.querySelector("#file-detail-rename");
 const fileDetailDelete = fileDetailDialog.querySelector("#file-detail-delete");
-fileDetailDialog.querySelector(".header > button")?.addEventListener("click", () => fileDetailDialog.close());
+fileDetailDialog.querySelector(".header > button")?.addEventListener("click", () => closeDialogModal(fileDetailDialog));
 
 fileDetailShare?.addEventListener("click", () => {
     const url = `${location.protocol}//${window.location.host}/file.html?path=/${username}${currentDialogPath}`
@@ -44,7 +45,7 @@ fileDetailRename?.addEventListener("click", () => {
         }
 
         renameFileFunc(currentDialogPath, input.value);
-        fileDetailDialog.close();
+        closeDialogModal(fileDetailDialog);
     })
 
     actionArea.className = "rename";
@@ -61,7 +62,7 @@ fileDetailDelete?.addEventListener("click", () => {
     confirmYes.textContent = "Usuń";
     confirmYes.addEventListener("click", () => {
         deleteFileFunc(currentDialogPath);
-        fileDetailDialog.close();
+        closeDialogModal(fileDetailDialog);
     });
 
     const confirmNo = document.createElement("button");
@@ -120,7 +121,7 @@ export function createFileDialog(username, path) {
 
 export function openFileDialog(path) {
     createFileDialog(username, path);
-    fileDetailDialog.showModal();
+    openDialogModal(fileDetailDialog);
 }
 
 // This is a hack, but I don't have time to make this not spaghetti.
