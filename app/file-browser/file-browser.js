@@ -188,6 +188,36 @@ quickTerminalForm.addEventListener("submit", (ev) => {
         if (li) {
             quickTerminalStatus(getShareURL(li.dataset.path));
         }
+    } else if (operation === "mv" || operation === "move" || operation === "rename") {
+        let [from, to] = params;
+        if (!from || !to) {
+            quickTerminalStatus(`${operation}: Wymagane ścieżki źródłowa i docelowa`);
+            return;
+        }
+
+        // ensure the target folder exists
+        const splitTo = to.split("/");
+        if (splitTo.length > 1) {
+            const targetFolder = splitTo[0];
+            if (!getFileLi(targetFolder, "directory")) {
+                quickTerminalStatus(`${operation}: Folder docelowy nie istnieje`);
+                return;
+            }
+        }
+
+        // ensure the target path does NOT exist
+        if (getFileLi(to)) {
+            quickTerminalStatus(`${operation}: Ścieżka docelowa już istnieje`);
+            return;
+        } else {
+            quickTerminalStatusBox.classList.add("hidden");
+        }
+
+        const li = getFileLi(from, "file");
+        if (li) {
+            moveByListItem(li, to.startsWith("/") ? to : "/" + to);
+            quickTerminal.close();
+        }
     } else if (operation === "rm" || operation === "remove" || operation === "delete" || operation === "del") {
         let [path] = params;
         if (!path) {
