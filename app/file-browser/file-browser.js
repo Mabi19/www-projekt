@@ -1,5 +1,7 @@
+import { username } from "../auth/account.js";
 import { closeDialogModal, openDialogModal } from "../dialog.js";
 import { setUpFolderAnimations } from "./details-anim.js";
+import { getShareURL } from "./file-actions.js";
 import { openFileDialog, setDeleteFileFunc, setRenameFileFunc } from "./file-dialog.js";
 import { IMAGE_EXTENSIONS } from "./file-types.js";
 
@@ -130,35 +132,78 @@ quickTerminalForm.addEventListener("submit", (ev) => {
         return;
     }
 
-    function getFileLi(path) {
+    // TODO: pozostałe operacje: mv/move/rename, share
+
+    const [operation, ...params] = command;
+
+    function getFileLi(path, requiredType = null) {
         if (!path.startsWith("/")) {
             path = "/" + path;
         }
 
         const el = fileRoot.querySelector(`li[data-path="${CSS.escape(path)}`);
         if (!el) {
-            quickTerminalStatus("view: Nie istnieje plik o takiej nazwie");
+            quickTerminalStatus(`${operation}: Nie istnieje plik o takiej nazwie`);
             return null;
         }
-        if (el.dataset.type !== "file") {
-            quickTerminalStatus("view: To nie jest plik");
+        if (requiredType !== null && el.dataset.type !== requiredType) {
+            quickTerminalStatus(`${operation}: To nie jest ${requiredType === "file" ? "plik" : "folder"}`);
             return null;
         }
         return el;
     }
 
-    // TODO: pozostałe operacje: rm/remove, mv/move/rename, download/dl, share
-
-    const [operation, ...params] = command;
     if (operation === "view" || operation === "cat") {
         let [path] = params;
         if (!path) {
-            quickTerminalStatus("view: Wymagana ścieżka do pliku");
+            quickTerminalStatus(`${operation}: Wymagana ścieżka do pliku`);
+            return;
+        }
+        const li = getFileLi(path, "file");
+        if (li) {
+            openFileDialog(li.dataset.path);
+            quickTerminal.close();
+        }
+    } else if (operation === "download" || operation === "dl" || operation === "wget") {
+        let [path] = params;
+        if (!path) {
+            quickTerminalStatus(`${operation}: Wymagana ścieżka do pliku`);
+            return;
+        }
+        const li = getFileLi(path, "file");
+        if (li) {
+            const anchor = document.createElement("a");
+            anchor.href = `/data/${username}${li.dataset.path}`;
+            anchor.download = path.split("/").at(-1);
+            anchor.click();
+            quickTerminal.close();
+        }
+    } else if (operation === "share") {
+        let [path] = params;
+        if (!path) {
+            quickTerminalStatus(`${operation}: Wymagana ścieżka do pliku`);
+            return;
+        }
+        const li = getFileLi(path, "file");
+        if (li) {
+            quickTerminalStatus(getShareURL(li.dataset.path));
+        }
+    } else if (operation === "rm" || operation === "remove" || operation === "delete" || operation === "del") {
+        let [path] = params;
+        if (!path) {
+            quickTerminalStatus(`${operation}: Wymagana ścieżka do pliku`);
             return;
         }
         const li = getFileLi(path);
         if (li) {
-            openFileDialog(li.dataset.path);
+            if (li.dataset.type == "directory") {
+                const list = li.querySelector(".directory-list");
+                if (list.firstElementChild && !confirm("Próbujesz usunąć folder z zawartością. Czy na pewno chcesz kontynuować?")) {
+                    return;
+                }
+            }
+
+            deleteFileByListItem(li);
             quickTerminal.close();
         }
     } else if (operation === "help") {

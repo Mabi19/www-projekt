@@ -1,5 +1,6 @@
 import { username } from "../auth/account.js";
 import { closeDialogModal, openDialogModal } from "../dialog.js";
+import { getShareURL } from "./file-actions.js";
 import { IMAGE_EXTENSIONS } from "./file-types.js";
 
 /** @type HTMLDialogElement */
@@ -13,7 +14,7 @@ const fileDetailDelete = fileDetailDialog.querySelector("#file-detail-delete");
 fileDetailDialog.querySelector(".header > button")?.addEventListener("click", () => closeDialogModal(fileDetailDialog));
 
 fileDetailShare?.addEventListener("click", () => {
-    const url = `${location.protocol}//${window.location.host}/file.html?path=/${username}${currentDialogPath}`
+    const url = getShareURL(currentDialogPath);
 
     const pre = document.createElement("pre");
     pre.textContent = url;
