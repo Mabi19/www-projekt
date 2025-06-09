@@ -182,6 +182,12 @@ details:not([open]) > .entry-main > .directory-icon-open {
     width: min(800px, 100vw);
     margin: auto auto .25rem auto;
 
+    &:open {
+        display: flex;
+    }
+    flex-flow: column nowrap;
+    gap: .25rem;
+
     background-color: var(--bg-light);
     border: var(--light-border);
     padding: .25rem;
