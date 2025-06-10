@@ -26,6 +26,7 @@ loginForm.addEventListener("submit", async (ev) => {
 
     if (!password) {
         setResult("Hasło jest wymagane");
+        return;
     }
 
     const res = await fetch("/login", { method: "POST", body: JSON.stringify({ username, password }) });
